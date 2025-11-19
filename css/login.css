@@ -49,6 +49,11 @@ body {
     max-width: 150px;
     height: auto;
     animation: pulse 2s ease-in-out infinite;
+    margin-bottom: 15px;
+}
+
+.logo[src=""], .logo:not([src]) {
+    display: none;
 }
 
 @keyframes pulse {
@@ -127,6 +132,12 @@ body {
 
 .btn-login:active {
     transform: translateY(0);
+}
+
+.btn-login:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .error-message {
