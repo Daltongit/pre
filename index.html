@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparta Academy - Sistema de Simuladores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            color: white;
+        }
+        
+        .logo {
+            width: 200px;
+            margin-bottom: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        h1 {
+            font-size: 48px;
+            color: #C9A961;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: #ccc;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(211, 47, 47, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 32px; }
+            p { font-size: 16px; }
+            .logo { width: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="assets/logos/sparta-logo.png" alt="Sparta Academy" class="logo">
+        <h1>SPARTA ACADEMY</h1>
+        <p>Sistema de Simuladores Universitarios</p>
+        <a href="login.html" class="btn">INGRESAR AL SISTEMA</a>
+    </div>
+</body>
+</html>

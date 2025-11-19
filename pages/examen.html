@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen - Sparta Academy</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/examen.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="../assets/logos/sparta-logo.png" alt="Logo" class="nav-logo">
+                <span class="nav-title">SPARTA ACADEMY</span>
+            </div>
+            <div class="nav-info">
+                <div class="timer-container">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="timer" class="timer">60:00</span>
+                </div>
+                <div class="progress-info">
+                    <span id="progressText" class="progress-text">Pregunta 1 de 50</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="exam-container">
+            <div id="preguntaContainer" class="pregunta-container">
+                <!-- La pregunta se cargará aquí dinámicamente -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de resultados -->
+    <div id="modalResultados" class="modal">
+        <div class="modal-content-large">
+            <div class="modal-header-resultado">
+                <h2>📊 RESULTADOS DEL SIMULADOR</h2>
+            </div>
+            <div class="modal-body-resultado" id="resultadosContent">
+                <!-- Los resultados se cargarán aquí -->
+            </div>
+            <div class="modal-footer">
+                <button id="btnVerDetalle" class="btn-detalle">Ver Detalle de Respuestas</button>
+                <button id="btnSalir" class="btn-salir">Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de detalle -->
+    <div id="modalDetalle" class="modal">
+        <div class="modal-content-large">
+            <div class="modal-header">
+                <h2>📋 DETALLE DE RESPUESTAS</h2>
+            </div>
+            <div class="modal-body-detalle" id="detalleContent">
+                <!-- El detalle se cargará aquí -->
+            </div>
+            <div class="modal-footer">
+                <button id="btnCerrarDetalle" class="btn-secondary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script>
+        authSystem.checkAuth();
+
+        let materiaInfo = null;
+        let preguntasExamen = [];
+        let respuestasEstudiante = [];
+        let indicePreguntaActual = 0;
+        let tiempoRestante = SYSTEM_CONFIG.tiempoExamen * 60;
+        let timerInterval = null;
+        let fechaInicio = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            materiaInfo = JSON.parse(localStorage.getItem('materiaSeleccionada'));
+            
+            if (!materiaInfo) {
+                alert('No se seleccionó ningún simulador');
+                window.location.href = 'simuladores.html';
+                return;
+            }
+
+            await cargarScriptExamen(materiaInfo.scriptExamen);
+            
+            document.getElementById('btnVerDetalle').addEventListener('click', mostrarDetalle);
+            document.getElementById('btnSalir').addEventListener('click', () => {
+                window.location.href = 'simuladores.html';
+            });
+            document.getElementById('btnCerrarDetalle').addEventListener('click', () => {
+                document.getElementById('modalDetalle').style.display = 'none';
+            });
+        });
+
+        async function cargarScriptExamen(scriptPath) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = scriptPath;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        function iniciarExamen(preguntas) {
+            preguntasExamen = seleccionarPreguntasAleatorias(preguntas, SYSTEM_CONFIG.totalPreguntasAleatorias);
+            respuestasEstudiante = new Array(preguntasExamen.length).fill(null);
+            fechaInicio = new Date();
+            
+            iniciarTimer();
+            mostrarPregunta();
+        }
+
+        function seleccionarPreguntasAleatorias(preguntas, cantidad) {
+            const mezcladas = [...preguntas].sort(() => Math.random() - 0.5);
+            return mezcladas.slice(0, Math.min(cantidad, preguntas.length));
+        }
+
+        function iniciarTimer() {
+            actualizarTimer();
+            timerInterval = setInterval(() => {
+                tiempoRestante--;
+                actualizarTimer();
+                
+                if (tiempoRestante <= 0) {
+                    finalizarExamen();
+                }
+            }, 1000);
+        }
+
+        function actualizarTimer() {
+            const minutos = Math.floor(tiempoRestante / 60);
+            const segundos = tiempoRestante % 60;
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            
+            if (tiempoRestante <= 300) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        function mostrarPregunta() {
+            const pregunta = preguntasExamen[indicePreguntaActual];
+            const respuestaActual = respuestasEstudiante[indicePreguntaActual];
+            
+            document.getElementById('progressText').textContent = 
+                `Pregunta ${indicePreguntaActual + 1} de ${preguntasExamen.length}`;
+            
+            const esUltima = indicePreguntaActual === preguntasExamen.length - 1;
+            
+            document.getElementById('preguntaContainer').innerHTML = `
+                <div class="pregunta-numero">Pregunta ${indicePreguntaActual + 1}</div>
+                <div class="pregunta-texto">${pregunta.pregunta}</div>
+                
+                <div class="opciones-container">
+                    ${['A', 'B', 'C', 'D'].map(letra => `
+                        <div class="opcion-item ${respuestaActual === letra ? 'selected' : ''}" 
+                             onclick="seleccionarOpcion('${letra}')">
+                            <input type="radio" 
+                                   name="respuesta" 
+                                   value="${letra}" 
+                                   class="opcion-radio"
+                                   ${respuestaActual === letra ? 'checked' : ''}>
+                            <span class="opcion-texto">${pregunta['opcion_' + letra.toLowerCase()]}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="acciones-container">
+                    <div></div>
+                    ${esUltima ? 
+                        '<button class="btn-terminar" onclick="finalizarExamen()">Terminar Examen</button>' :
+                        '<button class="btn-siguiente" onclick="siguientePregunta()">Siguiente →</button>'
+                    }
+                </div>
+            `;
+        }
+
+        function seleccionarOpcion(letra) {
+            respuestasEstudiante[indicePreguntaActual] = letra;
+            
+            document.querySelectorAll('.opcion-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function siguientePregunta() {
+            if (indicePreguntaActual < preguntasExamen.length - 1) {
+                indicePreguntaActual++;
+                mostrarPregunta();
+            }
+        }
+
+        async function finalizarExamen() {
+            clearInterval(timerInterval);
+            
+            const fechaFin = new Date();
+            const duracionMinutos = Math.round((fechaFin - fechaInicio) / 60000);
+            
+            let correctas = 0;
+            let incorrectas = 0;
+            let blanco = 0;
+            
+            const respuestasDetalle = preguntasExamen.map((pregunta, index) => {
+                const respuestaEstudiante = respuestasEstudiante[index];
+                const esCorrecta = respuestaEstudiante === pregunta.respuesta_correcta;
+                
+                if (respuestaEstudiante === null) {
+                    blanco++;
+                } else if (esCorrecta) {
+                    correctas++;
+                } else {
+                    incorrectas++;
+                }
+                
+                return {
+                    pregunta_id: pregunta.id,
+                    pregunta_texto: pregunta.pregunta,
+                    opcion_a: pregunta.opcion_a,
+                    opcion_b: pregunta.opcion_b,
+                    opcion_c: pregunta.opcion_c,
+                    opcion_d: pregunta.opcion_d,
+                    respuesta_estudiante: respuestaEstudiante,
+                    respuesta_correcta: pregunta.respuesta_correcta,
+                    es_correcta: respuestaEstudiante ? esCorrecta : null,
+                    orden_pregunta: index + 1
+                };
+            });
+            
+            const puntajeObtenido = Math.round((correctas / preguntasExamen.length) * SYSTEM_CONFIG.puntajeMaximo);
+            
+            try {
+                const currentUser = authSystem.getCurrentUser();
+                
+                const intentoData = {
+                    usuario: currentUser.usuario,
+                    materia_id: materiaInfo.materiaId,
+                    puntaje_obtenido: puntajeObtenido,
+                    total_preguntas: preguntasExamen.length,
+                    preguntas_correctas: correctas,
+                    preguntas_incorrectas: incorrectas,
+                    preguntas_blanco: blanco,
+                    fecha_inicio: fechaInicio.toISOString(),
+                    fecha_fin: fechaFin.toISOString(),
+                    duracion_minutos: duracionMinutos,
+                    completado: true
+                };
+                
+                const intento = await SupabaseService.guardarIntento(intentoData);
+                
+                const respuestasConIntento = respuestasDetalle.map(r => ({
+                    ...r,
+                    intento_id: intento.id
+                }));
+                
+                await SupabaseService.guardarRespuestasDetalle(respuestasConIntento);
+                
+                window.resultadosExamen = {
+                    puntaje: puntajeObtenido,
+                    correctas,
+                    incorrectas,
+                    blanco,
+                    total: preguntasExamen.length,
+                    detalles: respuestasDetalle
+                };
+                
+                mostrarResultados();
+                
+            } catch (error) {
+                console.error('Error guardando resultados:', error);
+                alert('Hubo un error al guardar los resultados');
+            }
+        }
+
+        function mostrarResultados() {
+            const resultados = window.resultadosExamen;
+            
+            document.getElementById('resultadosContent').innerHTML = `
+                <div class="resultado-principal">
+                    <h3>Tu Puntaje</h3>
+                    <div class="puntaje-grande">${resultados.puntaje}</div>
+                    <div class="puntaje-max">de ${SYSTEM_CONFIG.puntajeMaximo} puntos</div>
+                </div>
+                
+                <div class="estadisticas-grid">
+                    <div class="estadistica-item">
+                        <div class="estadistica-titulo">Total de Preguntas</div>
+                        <div class="estadistica-valor">${resultados.total}</div>
+                    </div>
+                    <div class="estadistica-item correctas">
+                        <div class="estadistica-titulo">Respuestas Correctas</div>
+                        <div class="estadistica-valor">${resultados.correctas}</div>
+                    </div>
+                    <div class="estadistica-item incorrectas">
+                        <div class="estadistica-titulo">Respuestas Incorrectas</div>
+                        <div class="estadistica-valor">${resultados.incorrectas}</div>
+                    </div>
+                    <div class="estadistica-item blanco">
+                        <div class="estadistica-titulo">Dejadas en Blanco</div>
+                        <div class="estadistica-valor">${resultados.blanco}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalResultados').style.display = 'block';
+        }
+
+        function mostrarDetalle() {
+            const resultados = window.resultadosExamen;
+            
+            const detalleHTML = resultados.detalles.map(detalle => {
+                let claseEstado = 'blanco';
+                let textoEstado = 'En Blanco';
+                
+                if (detalle.respuesta_estudiante) {
+                    claseEstado = detalle.es_correcta ? 'correcta' : 'incorrecta';
+                    textoEstado = detalle.es_correcta ? 'Correcta' : 'Incorrecta';
+                }
+                
+                return `
+                    <div class="detalle-pregunta ${claseEstado}">
+                        <div class="detalle-header">
+                            <span class="detalle-numero">Pregunta ${detalle.orden_pregunta}</span>
+                            <span class="detalle-estado ${claseEstado}">${textoEstado}</span>
+                        </div>
+                        <div class="detalle-pregunta-texto">${detalle.pregunta_texto}</div>
+                        <div class="detalle-respuestas">
+                            <div><strong>A)</strong> ${detalle.opcion_a}</div>
+                            <div><strong>B)</strong> ${detalle.opcion_b}</div>
+                            <div><strong>C)</strong> ${detalle.opcion_c}</div>
+                            <div><strong>D)</strong> ${detalle.opcion_d}</div>
+                            <div style="margin-top: 10px;">
+                                <strong class="respuesta-correcta">✓ Respuesta correcta: ${detalle.respuesta_correcta}</strong>
+                            </div>
+                            ${detalle.respuesta_estudiante && !detalle.es_correcta ? 
+                                `<div><strong class="respuesta-tuya">✗ Tu respuesta: ${detalle.respuesta_estudiante}</strong></div>` : ''}
+                            ${!detalle.respuesta_estudiante ? 
+                                `<div><strong style="color: #ff9800;">⚠ No respondiste esta pregunta</strong></div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('detalleContent').innerHTML = detalleHTML;
+            document.getElementById('modalDetalle').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

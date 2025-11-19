@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simuladores - Sparta Academy</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/simuladores.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="../assets/logos/sparta-logo.png" alt="Logo" class="nav-logo">
+                <span class="nav-title">SPARTA ACADEMY</span>
+            </div>
+            <div class="nav-user">
+                <button id="btnVolver" class="btn-secondary">← Volver</button>
+                <span id="userName" class="user-name"></span>
+                <button id="btnLogout" class="btn-logout">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title" id="universidadTitle"></h1>
+            <p class="page-subtitle">Selecciona el simulador que deseas realizar</p>
+
+            <div id="simuladoresGrid" class="simuladores-grid">
+                <!-- Los simuladores se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de confirmación -->
+    <div id="modalInstrucciones" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ INSTRUCCIONES DEL SIMULADOR</h2>
+            </div>
+            <div class="modal-body">
+                <div class="instruccion-item">
+                    <span class="instruccion-icon">⏱️</span>
+                    <p>Tendrás <strong>1 hora (60 minutos)</strong> para completar el examen</p>
+                </div>
+                <div class="instruccion-item">
+                    <span class="instruccion-icon">📝</span>
+                    <p>El examen consta de <strong>50 preguntas aleatorias</strong></p>
+                </div>
+                <div class="instruccion-item">
+                    <span class="instruccion-icon">➡️</span>
+                    <p>El intento es <strong>lineal</strong>: no podrás retroceder a preguntas anteriores</p>
+                </div>
+                <div class="instruccion-item">
+                    <span class="instruccion-icon">🎯</span>
+                    <p>La calificación máxima es de <strong>1000 puntos</strong></p>
+                </div>
+                <div class="instruccion-item">
+                    <span class="instruccion-icon">✅</span>
+                    <p>Al finalizar verás tu resultado detallado</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelar" class="btn-cancelar">Cancelar</button>
+                <button id="btnIniciar" class="btn-iniciar">Iniciar Simulador</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script>
+        authSystem.checkAuth();
+
+        let materiaSeleccionada = null;
+        let universidadActual = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUser = authSystem.getCurrentUser();
+            document.getElementById('userName').textContent = currentUser.nombreCompleto;
+            
+            universidadActual = JSON.parse(localStorage.getItem('universidadSeleccionada'));
+            if (!universidadActual) {
+                window.location.href = 'universidades.html';
+                return;
+            }
+            
+            document.getElementById('universidadTitle').textContent = `Simuladores - ${universidadActual.codigo}`;
+            
+            await cargarScriptUniversidad(universidadActual.config.simuladoresScript);
+            
+            document.getElementById('btnVolver').addEventListener('click', () => {
+                window.location.href = 'universidades.html';
+            });
+            
+            document.getElementById('btnLogout').addEventListener('click', () => {
+                authSystem.logout();
+            });
+            
+            document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
+            document.getElementById('btnIniciar').addEventListener('click', iniciarSimulador);
+        });
+
+        async function cargarScriptUniversidad(scriptPath) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = scriptPath;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        function abrirModal(materiaInfo) {
+            materiaSeleccionada = materiaInfo;
+            document.getElementById('modalInstrucciones').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalInstrucciones').style.display = 'none';
+            materiaSeleccionada = null;
+        }
+
+        function iniciarSimulador() {
+            if (materiaSeleccionada) {
+                localStorage.setItem('materiaSeleccionada', JSON.stringify(materiaSeleccionada));
+                window.location.href = 'examen.html';
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalInstrucciones');
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        };
+    </script>
+</body>
+</html>

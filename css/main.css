@@ -1,0 +1,238 @@
+:root {
+    --primary-color: #D32F2F;
+    --secondary-color: #C9A961;
+    --dark-color: #1a1a1a;
+    --light-bg: #f5f5f5;
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--light-bg);
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.navbar {
+    background: white;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-logo {
+    width: 40px;
+    height: auto;
+    transition: var(--transition);
+}
+
+.nav-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--secondary-color);
+    letter-spacing: 1px;
+}
+
+.nav-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.user-name {
+    color: var(--dark-color);
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+}
+
+.btn-logout, .btn-secondary {
+    padding: 10px 18px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    font-size: 14px;
+    width: 100%;
+    max-width: 250px;
+    white-space: nowrap;
+}
+
+.btn-secondary {
+    background: #666;
+}
+
+.btn-logout:hover, .btn-logout:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(211, 47, 47, 0.3);
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+    background: #555;
+    transform: translateY(-2px);
+}
+
+.main-content {
+    padding: 20px 15px;
+    width: 100%;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 24px;
+    color: var(--dark-color);
+    margin-bottom: 10px;
+    padding: 0 10px;
+}
+
+.page-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+@media (min-width: 576px) {
+    .nav-container {
+        padding: 15px 20px;
+        gap: 15px;
+    }
+    
+    .nav-logo {
+        width: 45px;
+    }
+    
+    .nav-title {
+        font-size: 20px;
+    }
+    
+    .nav-user {
+        flex-direction: row;
+        width: auto;
+    }
+    
+    .btn-logout, .btn-secondary {
+        width: auto;
+    }
+    
+    .page-title {
+        font-size: 28px;
+    }
+    
+    .page-subtitle {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 768px) {
+    .nav-container {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 15px 30px;
+    }
+    
+    .nav-logo {
+        width: 50px;
+    }
+    
+    .nav-title {
+        font-size: 24px;
+    }
+    
+    .nav-user {
+        gap: 20px;
+    }
+    
+    .user-name {
+        font-size: 16px;
+    }
+    
+    .btn-logout, .btn-secondary {
+        padding: 10px 20px;
+        font-size: 15px;
+    }
+    
+    .main-content {
+        padding: 40px 20px;
+    }
+    
+    .page-title {
+        font-size: 36px;
+    }
+    
+    .page-subtitle {
+        font-size: 18px;
+        margin-bottom: 40px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .main-content {
+        padding: 50px 30px;
+    }
+    
+    .page-title {
+        font-size: 42px;
+    }
+}
+
+button:focus,
+a:focus,
+input:focus {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+::selection {
+    background: var(--secondary-color);
+    color: white;
+}
+
+::-moz-selection {
+    background: var(--secondary-color);
+    color: white;
+}

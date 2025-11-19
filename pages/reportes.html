@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - Sparta Academy</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="../assets/logos/sparta-logo.png" alt="Logo" class="nav-logo">
+                <span class="nav-title">SPARTA ACADEMY</span>
+            </div>
+            <div class="nav-user">
+                <button id="btnVolver" class="btn-secondary">← Volver</button>
+                <span id="userName" class="user-name"></span>
+                <button id="btnLogout" class="btn-logout">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">📊 Reportes de Aspirantes</h1>
+            <p class="page-subtitle">Administración de resultados de simuladores</p>
+
+            <div class="filtros-container">
+                <input type="text" id="filtroUsuario" placeholder="Buscar por usuario..." class="filtro-input">
+                <button id="btnDescargarTodos" class="btn-download">📥 Descargar Todos (PDF)</button>
+            </div>
+
+            <div id="reportesContainer" class="reportes-container">
+                <!-- Los reportes se cargarán aquí -->
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/reportes.js"></script>
+</body>
+</html>

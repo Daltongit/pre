@@ -1,0 +1,199 @@
+.filtros-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding: 0 15px;
+}
+
+.filtro-input {
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.filtro-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.1);
+}
+
+.btn-download {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.btn-download:hover,
+.btn-download:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+}
+
+.reportes-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 0 15px;
+}
+
+.reporte-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px 15px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--secondary-color);
+    transition: var(--transition);
+}
+
+.reporte-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.reporte-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.reporte-usuario {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.reporte-puntaje {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.reporte-info {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.reporte-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+
+.reporte-label {
+    color: #666;
+    font-weight: 600;
+}
+
+.reporte-valor {
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.reporte-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-pdf {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-pdf:hover,
+.btn-pdf:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.no-reportes {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 16px;
+}
+
+@media (min-width: 576px) {
+    .filtros-container {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .filtro-input {
+        flex: 1;
+    }
+    
+    .btn-download {
+        width: auto;
+        min-width: 220px;
+    }
+    
+    .reportes-container {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+    
+    .reporte-card {
+        padding: 25px 20px;
+    }
+    
+    .reporte-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .reporte-acciones {
+        flex-direction: row;
+    }
+    
+    .btn-pdf {
+        flex: 1;
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 768px) {
+    .reporte-usuario {
+        font-size: 20px;
+    }
+    
+    .reporte-puntaje {
+        font-size: 28px;
+    }
+    
+    .reporte-item {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .reportes-container {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 25px;
+    }
+}

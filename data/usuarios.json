@@ -1,0 +1,10 @@
+{
+  "usuarios": [
+    {
+      "usuario": "milton",
+      "contrasena": "pepe",
+      "rol": "admin",
+      "nombre_completo": "Milton"
+    }
+  ]
+}

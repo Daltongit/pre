@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universidades - Sparta Academy</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/universidades.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="../assets/logos/sparta-logo.png" alt="Logo" class="nav-logo">
+                <span class="nav-title">SPARTA ACADEMY</span>
+            </div>
+            <div class="nav-user">
+                <span id="userName" class="user-name"></span>
+                <button id="btnLogout" class="btn-logout">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Selecciona tu Universidad</h1>
+            <p class="page-subtitle">Elige la institución para acceder a sus simuladores</p>
+            
+            <div id="adminPanel" class="admin-panel" style="display: none;">
+                <button id="btnReportes" class="btn-admin">
+                    📊 Ver Reportes de Aspirantes
+                </button>
+            </div>
+
+            <div id="universidadesGrid" class="universidades-grid">
+                <!-- Las universidades se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script>
+        authSystem.checkAuth();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUser = authSystem.getCurrentUser();
+            document.getElementById('userName').textContent = currentUser.nombreCompleto;
+            
+            if (authSystem.isAdmin()) {
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('btnReportes').addEventListener('click', () => {
+                    window.location.href = 'reportes.html';
+                });
+            }
+            
+            await cargarUniversidades();
+            
+            document.getElementById('btnLogout').addEventListener('click', () => {
+                authSystem.logout();
+            });
+        });
+
+        async function cargarUniversidades() {
+            try {
+                const universidades = await SupabaseService.getUniversidades();
+                const grid = document.getElementById('universidadesGrid');
+                
+                grid.innerHTML = universidades.map(uni => {
+                    const config = UNIVERSIDADES_CONFIG[uni.codigo];
+                    return `
+                        <div class="universidad-card" 
+                             onclick="seleccionarUniversidad('${uni.codigo}', ${uni.id})"
+                             tabindex="0"
+                             onkeypress="if(event.key==='Enter') seleccionarUniversidad('${uni.codigo}', ${uni.id})">
+                            <img src="${config.logo}" 
+                                 alt="Logo ${uni.nombre}" 
+                                 class="universidad-logo"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                            <div class="universidad-icon" style="display: none;">${config.icono}</div>
+                            <h3 class="universidad-nombre">${uni.nombre}</h3>
+                            <p class="universidad-codigo">${uni.codigo}</p>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error cargando universidades:', error);
+                alert('Error al cargar las universidades');
+            }
+        }
+
+        function seleccionarUniversidad(codigo, id) {
+            localStorage.setItem('universidadSeleccionada', JSON.stringify({ 
+                codigo, 
+                id,
+                config: UNIVERSIDADES_CONFIG[codigo]
+            }));
+            window.location.href = 'simuladores.html';
+        }
+    </script>
+</body>
+</html>

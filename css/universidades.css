@@ -1,0 +1,232 @@
+.admin-panel {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 0 15px;
+}
+
+.btn-admin {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #b8943f 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn-admin:hover, .btn-admin:focus {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(201, 169, 97, 0.4);
+}
+
+.universidades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 15px 0;
+}
+
+.universidad-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.universidad-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.universidad-card:hover::before,
+.universidad-card:focus::before {
+    transform: scaleX(1);
+}
+
+.universidad-card:hover,
+.universidad-card:focus {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.universidad-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    transition: var(--transition);
+    animation: float 3s ease-in-out infinite;
+}
+
+.universidad-card:hover .universidad-logo {
+    transform: scale(1.1);
+}
+
+.universidad-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+    line-height: 1;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.universidad-nombre {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--dark-color);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.universidad-codigo {
+    font-size: 13px;
+    color: var(--secondary-color);
+    font-weight: 600;
+    letter-spacing: 1.5px;
+}
+
+@media (min-width: 576px) {
+    .admin-panel {
+        margin-bottom: 30px;
+    }
+    
+    .btn-admin {
+        padding: 15px 30px;
+        font-size: 16px;
+    }
+    
+    .universidades-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+    }
+    
+    .universidad-card {
+        padding: 25px 20px;
+        border-radius: 15px;
+        min-height: 220px;
+    }
+    
+    .universidad-logo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .universidad-icon {
+        font-size: 70px;
+    }
+    
+    .universidad-nombre {
+        font-size: 16px;
+    }
+    
+    .universidad-codigo {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 768px) {
+    .universidades-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 25px;
+        padding: 20px 0;
+    }
+    
+    .universidad-card {
+        padding: 30px;
+        min-height: 250px;
+    }
+    
+    .universidad-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .universidad-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+    }
+    
+    .universidad-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+    
+    .universidad-nombre {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .universidad-codigo {
+        font-size: 16px;
+        letter-spacing: 2px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .universidades-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 30px;
+    }
+    
+    .universidad-card {
+        min-height: 280px;
+    }
+    
+    .universidad-logo {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .universidad-icon {
+        font-size: 90px;
+    }
+    
+    .universidad-nombre {
+        font-size: 20px;
+    }
+}
+
+.universidad-card:focus {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .universidad-card,
+    .universidad-logo,
+    .universidad-icon {
+        animation: none;
+        transition: none;
+    }
+}
