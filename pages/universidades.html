@@ -11,7 +11,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <img src="../assets/logos/sparta-logo.png" alt="Logo" class="nav-logo">
+                <img src="../assets/logos/sparta-logo.png" alt="Logo" class="nav-logo" onerror="this.style.display='none'">
                 <span class="nav-title">SPARTA ACADEMY</span>
             </div>
             <div class="nav-user">
@@ -33,7 +33,7 @@
             </div>
 
             <div id="universidadesGrid" class="universidades-grid">
-                <!-- Las universidades se cargarán aquí dinámicamente -->
+                <p style="text-align: center; color: #666;">Cargando universidades...</p>
             </div>
         </div>
     </main>
@@ -43,12 +43,14 @@
     <script src="../js/auth.js"></script>
     <script src="../js/supabase-client.js"></script>
     <script>
+        // Verificar autenticación
         authSystem.checkAuth();
 
         document.addEventListener('DOMContentLoaded', async () => {
             const currentUser = authSystem.getCurrentUser();
             document.getElementById('userName').textContent = currentUser.nombreCompleto;
             
+            // Mostrar panel admin si corresponde
             if (authSystem.isAdmin()) {
                 document.getElementById('adminPanel').style.display = 'block';
                 document.getElementById('btnReportes').addEventListener('click', () => {
@@ -56,8 +58,10 @@
                 });
             }
             
+            // Cargar universidades
             await cargarUniversidades();
             
+            // Logout
             document.getElementById('btnLogout').addEventListener('click', () => {
                 authSystem.logout();
             });
@@ -67,6 +71,11 @@
             try {
                 const universidades = await SupabaseService.getUniversidades();
                 const grid = document.getElementById('universidadesGrid');
+                
+                if (universidades.length === 0) {
+                    grid.innerHTML = '<p style="text-align: center; color: #666;">No hay universidades disponibles</p>';
+                    return;
+                }
                 
                 grid.innerHTML = universidades.map(uni => {
                     const config = UNIVERSIDADES_CONFIG[uni.codigo];
@@ -87,7 +96,8 @@
                 }).join('');
             } catch (error) {
                 console.error('Error cargando universidades:', error);
-                alert('Error al cargar las universidades');
+                document.getElementById('universidadesGrid').innerHTML = 
+                    '<p style="text-align: center; color: #f44336;">Error al cargar las universidades. Verifica tu conexión.</p>';
             }
         }
 
