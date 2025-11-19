@@ -32,80 +32,40 @@
         </div>
     </div>
 
+    <script src="js/auth.js"></script>
     <script>
-        class AuthSystem {
-            async cargarUsuarios() {
-                try {
-                    // Obtener la URL base del sitio
-                    const baseUrl = window.location.origin + window.location.pathname.replace('login.html', '');
-                    const url = baseUrl + 'data/usuarios.json';
-                    
-                    console.log('Cargando desde:', url); // Debug
-                    
-                    const response = await fetch(url);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    console.log('Datos cargados:', data); // Debug
-                    return data.usuarios;
-                } catch (error) {
-                    console.error('Error detallado:', error);
-                    // Fallback a usuarios hardcodeados si falla
-                    return [
-                        {
-                            usuario: "milton",
-                            contrasena: "pepe",
-                            rol: "admin",
-                            nombre_completo: "Milton"
-                        }
-                    ];
-                }
-            }
-
-            async login(usuario, contrasena) {
-                const usuarios = await this.cargarUsuarios();
-                const user = usuarios.find(u => 
-                    u.usuario === usuario && u.contrasena === contrasena
-                );
-
-                if (user) {
-                    const currentUser = {
-                        usuario: user.usuario,
-                        rol: user.rol,
-                        nombreCompleto: user.nombre_completo
-                    };
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    return true;
-                }
-                return false;
-            }
-        }
-
-        const authSystem = new AuthSystem();
-
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const usuario = document.getElementById('usuario').value.trim();
             const contrasena = document.getElementById('contrasena').value;
             const errorMessage = document.getElementById('errorMessage');
+            const btnLogin = document.querySelector('.btn-login');
             
+            // Limpiar mensaje previo
             errorMessage.style.display = 'none';
             
-            console.log('Iniciando login...'); // Debug
+            // Deshabilitar botón mientras procesa
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'INGRESANDO...';
             
-            const success = await authSystem.login(usuario, contrasena);
-            
-            if (success) {
-                console.log('Login exitoso'); // Debug
-                window.location.href = 'pages/universidades.html';
-            } else {
-                console.log('Login fallido'); // Debug
-                errorMessage.textContent = 'Usuario o contraseña incorrectos';
+            try {
+                const success = await authSystem.login(usuario, contrasena);
+                
+                if (success) {
+                    window.location.href = 'pages/universidades.html';
+                } else {
+                    errorMessage.textContent = 'Usuario o contraseña incorrectos';
+                    errorMessage.style.display = 'block';
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'INGRESAR';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Error al cargar el sistema de autenticación';
                 errorMessage.style.display = 'block';
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'INGRESAR';
+                console.error('Error:', error);
             }
         });
     </script>
