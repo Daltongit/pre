@@ -33,7 +33,7 @@
             </div>
 
             <div id="universidadesGrid" class="universidades-grid">
-                <p style="text-align: center; color: #666;">Cargando universidades...</p>
+                <p style="text-align: center; color: #666; grid-column: 1/-1;">Cargando universidades...</p>
             </div>
         </div>
     </main>
@@ -43,14 +43,12 @@
     <script src="../js/auth.js"></script>
     <script src="../js/supabase-client.js"></script>
     <script>
-        // Verificar autenticación
         authSystem.checkAuth();
 
         document.addEventListener('DOMContentLoaded', async () => {
             const currentUser = authSystem.getCurrentUser();
             document.getElementById('userName').textContent = currentUser.nombreCompleto;
             
-            // Mostrar panel admin si corresponde
             if (authSystem.isAdmin()) {
                 document.getElementById('adminPanel').style.display = 'block';
                 document.getElementById('btnReportes').addEventListener('click', () => {
@@ -58,10 +56,8 @@
                 });
             }
             
-            // Cargar universidades
             await cargarUniversidades();
             
-            // Logout
             document.getElementById('btnLogout').addEventListener('click', () => {
                 authSystem.logout();
             });
@@ -73,7 +69,7 @@
                 const grid = document.getElementById('universidadesGrid');
                 
                 if (universidades.length === 0) {
-                    grid.innerHTML = '<p style="text-align: center; color: #666;">No hay universidades disponibles</p>';
+                    grid.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">No hay universidades disponibles</p>';
                     return;
                 }
                 
@@ -83,21 +79,26 @@
                         <div class="universidad-card" 
                              onclick="seleccionarUniversidad('${uni.codigo}', ${uni.id})"
                              tabindex="0"
-                             onkeypress="if(event.key==='Enter') seleccionarUniversidad('${uni.codigo}', ${uni.id})">
-                            <img src="${config.logo}" 
-                                 alt="Logo ${uni.nombre}" 
-                                 class="universidad-logo"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
-                            <div class="universidad-icon" style="display: none;">${config.icono}</div>
-                            <h3 class="universidad-nombre">${uni.nombre}</h3>
-                            <p class="universidad-codigo">${uni.codigo}</p>
+                             onkeypress="if(event.key==='Enter') seleccionarUniversidad('${uni.codigo}', ${uni.id})"
+                             role="button"
+                             aria-label="Seleccionar ${uni.nombre}">
+                            <div class="universidad-logo-container">
+                                <img src="${config.logo}" 
+                                     alt="Logo ${uni.nombre}" 
+                                     class="universidad-logo"
+                                     onerror="this.outerHTML='<div class=universidad-icon>${config.icono}</div>';">
+                            </div>
+                            <div class="universidad-info">
+                                <h3 class="universidad-nombre">${uni.nombre}</h3>
+                                <span class="universidad-codigo">${uni.codigo}</span>
+                            </div>
                         </div>
                     `;
                 }).join('');
             } catch (error) {
                 console.error('Error cargando universidades:', error);
                 document.getElementById('universidadesGrid').innerHTML = 
-                    '<p style="text-align: center; color: #f44336;">Error al cargar las universidades. Verifica tu conexión.</p>';
+                    '<p style="text-align: center; color: #f44336; grid-column: 1/-1;">Error al cargar las universidades. Verifica tu conexión.</p>';
             }
         }
 
