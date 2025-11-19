@@ -10,6 +10,7 @@
     <div class="login-container">
         <div class="login-box">
             <div class="logo-container">
+                <img src="assets/logos/sparta-logo.png" alt="Sparta Academy Logo" class="logo" onerror="this.style.display='none'">
                 <h1 class="title">SPARTA ACADEMY</h1>
                 <p class="subtitle">Sistema de Simuladores Universitarios</p>
             </div>
@@ -42,10 +43,7 @@
             const errorMessage = document.getElementById('errorMessage');
             const btnLogin = document.querySelector('.btn-login');
             
-            // Limpiar mensaje previo
             errorMessage.style.display = 'none';
-            
-            // Deshabilitar botón mientras procesa
             btnLogin.disabled = true;
             btnLogin.textContent = 'INGRESANDO...';
             
