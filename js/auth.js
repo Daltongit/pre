@@ -5,37 +5,50 @@ class AuthSystem {
 
     async cargarUsuarios() {
         try {
-            const response = await fetch('../data/usuarios.json');
+            // Para GitHub Pages, usa ruta absoluta desde la raíz
+            const response = await fetch('./data/usuarios.json');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const data = await response.json();
+            console.log('✓ Usuarios cargados correctamente');
             return data.usuarios;
         } catch (error) {
-            console.error('Error cargando usuarios:', error);
-            return [];
+            console.error('✗ Error cargando usuarios:', error);
+            throw error;
         }
     }
 
     async login(usuario, contrasena) {
-        const usuarios = await this.cargarUsuarios();
-        const user = usuarios.find(u => 
-            u.usuario === usuario && u.contrasena === contrasena
-        );
+        try {
+            const usuarios = await this.cargarUsuarios();
+            
+            const user = usuarios.find(u => 
+                u.usuario === usuario && u.contrasena === contrasena
+            );
 
-        if (user) {
-            this.currentUser = {
-                usuario: user.usuario,
-                rol: user.rol,
-                nombreCompleto: user.nombre_completo
-            };
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-            return true;
+            if (user) {
+                this.currentUser = {
+                    usuario: user.usuario,
+                    rol: user.rol,
+                    nombreCompleto: user.nombre_completo
+                };
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error en login:', error);
+            return false;
         }
-        return false;
     }
 
     logout() {
         this.currentUser = null;
         localStorage.removeItem('currentUser');
-        window.location.href = '../login.html';
+        window.location.href = './login.html';
     }
 
     getCurrentUser() {
